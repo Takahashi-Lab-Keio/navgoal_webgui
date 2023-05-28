@@ -35,7 +35,6 @@
     var map_frame = '/map';
     var base_frame = '/base_link';
     var robot_pose = '/robot_pose';
-    var topicName = '/whill/wagon_nav/request';
     //######################################################################################//
 
     // 2D map subscriber for check map size
@@ -45,6 +44,7 @@
       messageType: 'nav_msgs/OccupancyGrid'
     });
 
+    // callback function of map subscriber
     Maplistener.subscribe(function (message) {
       var map_metadata = message.info;
       var map_width = map_metadata.width;
@@ -53,7 +53,7 @@
       Maplistener.unsubscribe();
 
       // Create the main viewer.
-      // determine size
+      // determine displayed map size according to browser size
       console.log(window.innerWidth, window.innerHeight);
       if (window.innerWidth < window.innerHeight){
         var Width = window.innerWidth
@@ -72,14 +72,15 @@
         }
       }
 
+      // map viewer object
       var viewer = new ROS2D.Viewer({
         divID : 'nav',
         width : Width,
         height : Height
       });
 
-      // Setup the nav client.
-      var nav = NAV2D.OccupancyGridClientNav({
+      // Setup the robot position viewer client.
+      var nav = NAV2D.RobotPositionViewerClient({
         ros : ros,
         rootObject : viewer.scene,
         viewer : viewer,
@@ -87,8 +88,7 @@
         map_frame: map_frame,
         base_frame: base_frame,
         map_topic: map_topic,
-        robot_pose: robot_pose,
-        topicName : topicName
+        robot_pose: robot_pose
       });
     });
   }
